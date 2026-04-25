@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # Universal launcher for free-claude-code
 # Supports: macOS, Linux (GNOME, KDE, XFCE, fallback)
@@ -62,7 +61,6 @@ open_terminal_window() {
 }
 
 fix_sed() {
-    # BSD sed (Mac) needs -i '', GNU sed (Linux) needs -i
     if [ "$OS" = "Darwin" ]; then
         sed -i '' "$@"
     else
@@ -120,11 +118,11 @@ echo ""
 # ─── Model selection ──────────────────────────────────────────────────────────
 if [ "$PROVIDER" = "nvidia_nim" ]; then
     echo "Select model:"
-    echo "1. kimi-k2-thinking          (🧠 best quality, extended reasoning, default)"
-    echo "2. deepseek-ai/deepseek-v4-flash  (⚡ fast coding, 1M context)"
-    echo "3. kimi-k2-instruct          (🚀 fast, everyday tasks)"
-    echo "4. mistral-large-3-675b-instruct-2512 (✍️  writing, emails)"
-    echo "5. Custom                    (type any NIM model name)"
+    echo "1. kimi-k2-thinking                    (🧠 best quality, extended reasoning, default)"
+    echo "2. deepseek-ai/deepseek-v4-flash       (⚡ fast coding, 1M context)"
+    echo "3. kimi-k2-instruct                    (🚀 fast, everyday tasks)"
+    echo "4. mistral-large-3-675b-instruct-2512  (✍️  writing, emails)"
+    echo "5. Custom                              (type any NIM model name)"
     read -p "Model (1-5) [1]: " model_choice
 
     case "$model_choice" in
@@ -187,11 +185,8 @@ echo "✅ Model    : $MODEL"
 echo ""
 
 # ─── Update .env ──────────────────────────────────────────────────────────────
-fix_sed "s|^MODEL_OPUS=.*|MODEL_OPUS=\"$MODEL\"|" "$ENV_FILE"
-fix_sed "s|^MODEL_SONNET=.*|MODEL_SONNET=\"$MODEL\"|" "$ENV_FILE"
-fix_sed "s|^MODEL_HAIKU=.*|MODEL_HAIKU=\"$MODEL\"|" "$ENV_FILE"
 fix_sed "s|^MODEL=.*|MODEL=\"$MODEL\"|" "$ENV_FILE"
-echo "✅ Updated .env"
+echo "✅ Updated .env — MODEL set to $MODEL"
 
 # ─── Launch proxy ─────────────────────────────────────────────────────────────
 PROXY_CMD="cd $SCRIPT_DIR && uv run uvicorn server:app --host 0.0.0.0 --port 8082"
@@ -203,8 +198,8 @@ sleep 3
 CLAUDE_CMD="ANTHROPIC_AUTH_TOKEN=freecc ANTHROPIC_BASE_URL=http://localhost:8082 claude"
 open_terminal_window "Claude Code ($MODEL)" "$CLAUDE_CMD"
 
-echo "✅ Claude Code launched!"
 echo ""
+echo "✅ Claude Code launched!"
 echo "   Proxy  → Terminal: 'Claude Proxy ($PROVIDER)'"
 echo "   Claude → Terminal: 'Claude Code ($MODEL)'"
 echo ""
